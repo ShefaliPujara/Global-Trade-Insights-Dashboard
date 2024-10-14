@@ -4,7 +4,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import altair as al
 import streamlit as st
 
 # Load the dataset
@@ -29,25 +28,26 @@ dtsample['Date'] = pd.to_datetime(dtsample['Date'], dayfirst=True, errors='coerc
 # Sidebar to select analysis type
 st.sidebar.title("Select Analysis Type")
 analysis_type = st.sidebar.selectbox("Choose an analysis to display:", 
-    ["Product Performance Radar Chart"
-        "Waterfall Chart of Cumulative Category Value"
-    "Monthly Transaction Value Trends", 
-     "Weight vs Value by Shipping Method", 
-     "Quantity Trends by Category", 
-     "Average Transaction Value by Payment Terms", 
-     "Top Ports and Products by Quantity", 
-     "Top Suppliers by Value and Payment Terms", 
-     "Weight vs Value by Country", 
-     "Top Products by Customs Code and Value", 
-     "Quantity vs Value by Category", 
-     "Transaction Value by Payment Terms", 
-     "Seasonal Trends by Category", 
-     "Quantity vs Value by Supplier", 
-      
-     ]
+    [
+        "Product Performance Radar Chart",
+        "Waterfall Chart of Cumulative Category Value",
+        "Monthly Transaction Value Trends", 
+        "Weight vs Value by Shipping Method", 
+        "Quantity Trends by Category", 
+        "Average Transaction Value by Payment Terms", 
+        "Top Ports and Products by Quantity", 
+        "Top Suppliers by Value and Payment Terms", 
+        "Weight vs Value by Country", 
+        "Top Products by Customs Code and Value", 
+        "Quantity vs Value by Category", 
+        "Transaction Value by Payment Terms", 
+        "Seasonal Trends by Category", 
+        "Quantity vs Value by Supplier"
+    ]
 )
-# 15. Product Performance Radar Chart
-elif analysis_type == "Product Performance Radar Chart":
+
+# 1. Product Performance Radar Chart
+if analysis_type == "Product Performance Radar Chart":
     st.subheader("Product Performance Radar Chart")
     product_performance = dtsample.groupby('Product').agg({'Quantity': 'sum', 'Value': 'sum', 'Weight': 'sum'}).reset_index()
 
@@ -68,8 +68,7 @@ elif analysis_type == "Product Performance Radar Chart":
     plt.title(f'Performance of Product: {product_performance.loc[0, "Product"]}')
     st.pyplot(plt)
 
-
-# 17. Waterfall Chart of Cumulative Category Value
+# 2. Waterfall Chart of Cumulative Category Value
 elif analysis_type == "Waterfall Chart of Cumulative Category Value":
     st.subheader("Waterfall Chart of Cumulative Category Value")
     category_value = dtsample.groupby('Category')['Value'].sum().reset_index()
@@ -88,8 +87,8 @@ elif analysis_type == "Waterfall Chart of Cumulative Category Value":
     plt.grid(True)
     st.pyplot(plt)
 
-# 1. Monthly Transaction Value Trends
-if analysis_type == "Monthly Transaction Value Trends":
+# 3. Monthly Transaction Value Trends
+elif analysis_type == "Monthly Transaction Value Trends":
     st.subheader("Monthly Transaction Value Trends")
     monthly_value = dtsample.groupby(dtsample['Date'].dt.to_period('M'))['Value'].sum()
 
@@ -102,7 +101,7 @@ if analysis_type == "Monthly Transaction Value Trends":
     plt.grid(True)
     st.pyplot(plt)
 
-# 2. Weight vs Value by Shipping Method
+# 4. Weight vs Value by Shipping Method
 elif analysis_type == "Weight vs Value by Shipping Method":
     st.subheader("Weight vs Value by Shipping Method")
     
@@ -118,7 +117,7 @@ elif analysis_type == "Weight vs Value by Shipping Method":
     plt.grid(True)
     st.pyplot(plt)
 
-# 3. Quantity Trends by Category
+# 5. Quantity Trends by Category
 elif analysis_type == "Quantity Trends by Category":
     st.subheader("Quantity Trends by Category")
     date_category_quantity = dtsample.groupby([dtsample['Date'].dt.to_period('M'), 'Category'])['Quantity'].sum().reset_index()
@@ -137,7 +136,7 @@ elif analysis_type == "Quantity Trends by Category":
     plt.grid(True)
     st.pyplot(plt)
 
-# 4. Average Transaction Value by Payment Terms
+# 6. Average Transaction Value by Payment Terms
 elif analysis_type == "Average Transaction Value by Payment Terms":
     st.subheader("Average Transaction Value by Payment Terms")
     payment_terms_value = dtsample.groupby('Payment_Terms')['Value'].mean().reset_index()
@@ -151,7 +150,7 @@ elif analysis_type == "Average Transaction Value by Payment Terms":
     plt.tight_layout()
     st.pyplot(plt)
 
-# 5. Top Ports and Products by Quantity
+# 7. Top Ports and Products by Quantity
 elif analysis_type == "Top Ports and Products by Quantity":
     st.subheader("Top Ports and Products by Quantity")
     port_product_quantity = dtsample.groupby(['Port', 'Product'])['Quantity'].sum().reset_index()
@@ -166,7 +165,7 @@ elif analysis_type == "Top Ports and Products by Quantity":
     plt.tight_layout()
     st.pyplot(plt)
 
-# 6. Top Suppliers by Value and Payment Terms
+# 8. Top Suppliers by Value and Payment Terms
 elif analysis_type == "Top Suppliers by Value and Payment Terms":
     st.subheader("Top Suppliers by Value and Payment Terms")
     supplier_payment_value = dtsample.groupby(['Supplier', 'Payment_Terms'])['Value'].sum().reset_index()
@@ -181,7 +180,7 @@ elif analysis_type == "Top Suppliers by Value and Payment Terms":
     plt.tight_layout()
     st.pyplot(plt)
 
-# 7. Weight vs Value by Country
+# 9. Weight vs Value by Country
 elif analysis_type == "Weight vs Value by Country":
     st.subheader("Weight vs Value by Country")
     country_weight_value = dtsample.groupby('Country')[['Weight', 'Value']].sum().reset_index()
@@ -197,88 +196,7 @@ elif analysis_type == "Weight vs Value by Country":
     plt.grid(True)
     st.pyplot(plt)
 
-# 8. Top Products by Customs Code and Value
+# 10. Top Products by Customs Code and Value
 elif analysis_type == "Top Products by Customs Code and Value":
     st.subheader("Top Products by Customs Code and Transaction Value")
-    customs_product_value = dtsample.groupby(['Customs_Code', 'Product'])['Value'].sum().reset_index()
-    top_customs_products = customs_product_value.sort_values('Value', ascending=False).head(10)
-
-    plt.figure(figsize=(12, 6))
-    plt.bar(top_customs_products['Customs_Code'].astype(str) + ' - ' + top_customs_products['Product'], 
-            top_customs_products['Value'], color='olive')
-    plt.title('Top Products by Customs Code and Transaction Value')
-    plt.xlabel('Customs Code and Product')
-    plt.ylabel('Total Transaction Value')
-    plt.xticks(rotation=90)
-    plt.tight_layout()
-    st.pyplot(plt)
-
-# 9. Quantity vs Value by Category
-elif analysis_type == "Quantity vs Value by Category":
-    st.subheader("Quantity vs Value by Category")
-    category_quantity_value = dtsample.groupby('Category')[['Quantity', 'Value']].sum().reset_index()
-
-    plt.figure(figsize=(8, 6))
-    plt.scatter(category_quantity_value['Quantity'], category_quantity_value['Value'], color='darkcyan', s=100)
-    for i, txt in enumerate(category_quantity_value['Category']):
-        plt.annotate(txt, (category_quantity_value['Quantity'][i], category_quantity_value['Value'][i]), fontsize=9)
-
-    plt.title('Quantity vs. Value by Category')
-    plt.xlabel('Total Quantity')
-    plt.ylabel('Total Value')
-    plt.grid(True)
-    st.pyplot(plt)
-
-# 10. Transaction Value by Payment Terms
-elif analysis_type == "Transaction Value by Payment Terms":
-    st.subheader("Transaction Value Distribution by Payment Terms")
-    payment_terms_value = dtsample.groupby('Payment_Terms')['Value'].sum()
-
-    plt.figure(figsize=(8, 8))
-    plt.pie(payment_terms_value, labels=payment_terms_value.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette("pastel"))
-    plt.title('Transaction Value Distribution by Payment Terms')
-    plt.axis('equal')  # Equal aspect ratio ensures that pie chart is circular.
-    st.pyplot(plt)
-
-# 11. Seasonal Trends by Category
-elif analysis_type == "Seasonal Trends by Category":
-    st.subheader("Seasonal Trends in Transactions by Category")
-    dtsample['Month'] = dtsample['Date'].dt.month
-    seasonal_trends = dtsample.groupby(['Month', 'Category'])['Value'].sum().reset_index()
-    seasonal_trends_pivot = seasonal_trends.pivot(index='Month', columns='Category', values='Value')
-
-    plt.figure(figsize=(12, 6))
-    for category in seasonal_trends_pivot.columns:
-        plt.plot(seasonal_trends_pivot.index, seasonal_trends_pivot[category], marker='o', label=category)
-
-    plt.title('Seasonal Trends in Transaction Value by Category')
-    plt.xlabel('Month')
-    plt.ylabel('Total Transaction Value')
-    plt.xticks(seasonal_trends_pivot.index, rotation=0)
-    plt.legend(title='Category')
-    plt.grid(True)
-    st.pyplot(plt)
-
-# 12. Quantity vs Value by Supplier
-elif analysis_type == "Quantity vs Value by Supplier":
-    st.subheader("Quantity vs Value by Supplier")
-    supplier_quantity_value = dtsample.groupby('Supplier')[['Quantity', 'Value']].sum().reset_index()
-
-    plt.figure(figsize=(10, 6))
-    plt.scatter(supplier_quantity_value['Quantity'], supplier_quantity_value['Value'], color='brown', alpha=0.6)
-    for i, txt in enumerate(supplier_quantity_value['Supplier']):
-        plt.annotate(txt, (supplier_quantity_value['Quantity'][i], supplier_quantity_value['Value'][i]), fontsize=8)
-
-    plt.title('Quantity vs. Value by Supplier')
-    plt.xlabel('Total Quantity')
-    plt.ylabel('Total Value')
-    plt.grid(True)
-    st.pyplot(plt)
-
-
-
-
-
-
-
-# Add any other custom analyses you would like from your list, structured similarly.
+    customs_product_value = d
