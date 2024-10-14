@@ -240,8 +240,8 @@ elif analysis_type == "Scatter Plot of Quantity vs Value with Shipping Cost":
     st.subheader("Scatter Plot of Quantity vs Value with Shipping Cost")
     
     plt.figure(figsize=(10, 6))
-    plt.scatter(dtsample['Quantity'], dtsample['Value'], c=dtsample['Shipping_Cost'], cmap='viridis', alpha=0.5)
-    plt.colorbar(label='Shipping Cost')
+    plt.scatter(dtsample['Quantity'], dtsample['Value'], c=dtsample[' Shipping_Cost'], cmap='viridis', alpha=0.5)
+    plt.colorbar(label=' Shipping Cost')
     plt.title('Quantity vs. Value with Shipping Cost as Color')
     plt.xlabel('Total Quantity')
     plt.ylabel('Total Value')
@@ -251,7 +251,7 @@ elif analysis_type == "Scatter Plot of Quantity vs Value with Shipping Cost":
 # 14. Shipping Cost by Category and Payment Terms
 elif analysis_type == "Shipping Cost by Category and Payment Terms":
     st.subheader("Shipping Cost by Category and Payment Terms")
-    category_payment_cost = dtsample.groupby(['Category', 'Payment_Terms'])['Shipping_Cost'].sum().unstack()
+    category_payment_cost = dtsample.groupby(['Category', 'Payment_Terms'])[' Shipping_Cost'].sum().unstack()
 
     plt.figure(figsize=(12, 6))
     category_payment_cost.plot(kind='bar', stacked=True)
@@ -288,7 +288,7 @@ elif analysis_type == "Product Performance Radar Chart":
 # 16. Correlation Matrix
 elif analysis_type == "Correlation Matrix":
     st.subheader("Correlation Matrix")
-    correlation_data = dtsample[['Value', 'Quantity', 'Weight', 'Shipping_Cost']]
+    correlation_data = dtsample[['Value', 'Quantity', 'Weight', ' Shipping_Cost']]
     corr = correlation_data.corr()
 
     plt.figure(figsize=(8, 6))
