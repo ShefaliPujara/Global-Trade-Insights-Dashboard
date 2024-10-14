@@ -29,7 +29,9 @@ dtsample['Date'] = pd.to_datetime(dtsample['Date'], dayfirst=True, errors='coerc
 # Sidebar to select analysis type
 st.sidebar.title("Select Analysis Type")
 analysis_type = st.sidebar.selectbox("Choose an analysis to display:", 
-    ["Monthly Transaction Value Trends", 
+    ["Product Performance Radar Chart"
+        "Waterfall Chart of Cumulative Category Value"
+    "Monthly Transaction Value Trends", 
      "Weight vs Value by Shipping Method", 
      "Quantity Trends by Category", 
      "Average Transaction Value by Payment Terms", 
@@ -42,11 +44,49 @@ analysis_type = st.sidebar.selectbox("Choose an analysis to display:",
      "Seasonal Trends by Category", 
      "Quantity vs Value by Supplier", 
       
-      
-     "Product Performance Radar Chart", 
-     
-     "Waterfall Chart of Cumulative Category Value"]
+     ]
 )
+# 15. Product Performance Radar Chart
+elif analysis_type == "Product Performance Radar Chart":
+    st.subheader("Product Performance Radar Chart")
+    product_performance = dtsample.groupby('Product').agg({'Quantity': 'sum', 'Value': 'sum', 'Weight': 'sum'}).reset_index()
+
+    categories = list(product_performance.columns[1:])
+    N = len(categories)
+
+    angles = [n / float(N) * 2 * np.pi for n in range(N)]
+    angles += angles[:1]
+
+    values = product_performance.loc[0, categories].values.flatten().tolist()
+    values += values[:1]
+
+    plt.figure(figsize=(8, 8), dpi=150)
+    ax = plt.subplot(111, polar=True)
+    plt.xticks(angles[:-1], categories)
+    ax.plot(angles, values, linewidth=1, linestyle='solid')
+    ax.fill(angles, values, 'b', alpha=0.1)
+    plt.title(f'Performance of Product: {product_performance.loc[0, "Product"]}')
+    st.pyplot(plt)
+
+
+# 17. Waterfall Chart of Cumulative Category Value
+elif analysis_type == "Waterfall Chart of Cumulative Category Value":
+    st.subheader("Waterfall Chart of Cumulative Category Value")
+    category_value = dtsample.groupby('Category')['Value'].sum().reset_index()
+    category_value = category_value.sort_values('Value', ascending=False)
+    
+    cumulative_value = category_value['Value'].cumsum()
+    
+    plt.figure(figsize=(10, 6))
+    plt.bar(category_value['Category'], category_value['Value'], color='green')
+    plt.plot(category_value['Category'], cumulative_value, color='orange', marker='o', label='Cumulative Value')
+    plt.title('Cumulative Value by Category')
+    plt.xlabel('Category')
+    plt.ylabel('Value')
+    plt.xticks(rotation=45)
+    plt.legend()
+    plt.grid(True)
+    st.pyplot(plt)
 
 # 1. Monthly Transaction Value Trends
 if analysis_type == "Monthly Transaction Value Trends":
@@ -237,46 +277,8 @@ elif analysis_type == "Quantity vs Value by Supplier":
 
 
 
-# 15. Product Performance Radar Chart
-elif analysis_type == "Product Performance Radar Chart":
-    st.subheader("Product Performance Radar Chart")
-    product_performance = dtsample.groupby('Product').agg({'Quantity': 'sum', 'Value': 'sum', 'Weight': 'sum'}).reset_index()
-
-    categories = list(product_performance.columns[1:])
-    N = len(categories)
-
-    angles = [n / float(N) * 2 * np.pi for n in range(N)]
-    angles += angles[:1]
-
-    values = product_performance.loc[0, categories].values.flatten().tolist()
-    values += values[:1]
-
-    plt.figure(figsize=(8, 8), dpi=150)
-    ax = plt.subplot(111, polar=True)
-    plt.xticks(angles[:-1], categories)
-    ax.plot(angles, values, linewidth=1, linestyle='solid')
-    ax.fill(angles, values, 'b', alpha=0.1)
-    plt.title(f'Performance of Product: {product_performance.loc[0, "Product"]}')
-    st.pyplot(plt)
 
 
-# 17. Waterfall Chart of Cumulative Category Value
-elif analysis_type == "Waterfall Chart of Cumulative Category Value":
-    st.subheader("Waterfall Chart of Cumulative Category Value")
-    category_value = dtsample.groupby('Category')['Value'].sum().reset_index()
-    category_value = category_value.sort_values('Value', ascending=False)
-    
-    cumulative_value = category_value['Value'].cumsum()
-    
-    plt.figure(figsize=(10, 6))
-    plt.bar(category_value['Category'], category_value['Value'], color='green')
-    plt.plot(category_value['Category'], cumulative_value, color='orange', marker='o', label='Cumulative Value')
-    plt.title('Cumulative Value by Category')
-    plt.xlabel('Category')
-    plt.ylabel('Value')
-    plt.xticks(rotation=45)
-    plt.legend()
-    plt.grid(True)
-    st.pyplot(plt)
+
 
 # Add any other custom analyses you would like from your list, structured similarly.
