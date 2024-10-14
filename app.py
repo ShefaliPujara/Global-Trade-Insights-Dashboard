@@ -73,9 +73,9 @@ elif analysis_type == "Waterfall Chart of Cumulative Category Value":
     st.subheader("Waterfall Chart of Cumulative Category Value")
     category_value = dtsample.groupby('Category')['Value'].sum().reset_index()
     category_value = category_value.sort_values('Value', ascending=False)
-    
+
     cumulative_value = category_value['Value'].cumsum()
-    
+
     plt.figure(figsize=(10, 6))
     plt.bar(category_value['Category'], category_value['Value'], color='green')
     plt.plot(category_value['Category'], cumulative_value, color='orange', marker='o', label='Cumulative Value')
@@ -199,4 +199,77 @@ elif analysis_type == "Weight vs Value by Country":
 # 10. Top Products by Customs Code and Value
 elif analysis_type == "Top Products by Customs Code and Value":
     st.subheader("Top Products by Customs Code and Transaction Value")
-    customs_product_value = d
+    customs_product_value = dtsample.groupby(['Customs_Code', 'Product'])['Value'].sum().reset_index()
+    top_customs_products = customs_product_value.sort_values('Value', ascending=False).head(10)
+
+    plt.figure(figsize=(12, 6))
+    plt.bar(top_customs_products['Customs_Code'].astype(str) + ' - ' + top_customs_products['Product'], 
+            top_customs_products['Value'], color='olive')
+    plt.title('Top Products by Customs Code and Transaction Value')
+    plt.xlabel('Customs Code and Product')
+    plt.ylabel('Total Transaction Value')
+    plt.xticks(rotation=90)
+    plt.tight_layout()
+    st.pyplot(plt)
+
+# 11. Quantity vs Value by Category
+elif analysis_type == "Quantity vs Value by Category":
+    st.subheader("Quantity vs Value by Category")
+    category_quantity_value = dtsample.groupby('Category')[['Quantity', 'Value']].sum().reset_index()
+
+    plt.figure(figsize=(8, 6))
+    plt.scatter(category_quantity_value['Quantity'], category_quantity_value['Value'], color='darkcyan', s=100)
+    for i, txt in enumerate(category_quantity_value['Category']):
+        plt.annotate(txt, (category_quantity_value['Quantity'][i], category_quantity_value['Value'][i]), fontsize=9)
+
+    plt.title('Quantity vs. Value by Category')
+    plt.xlabel('Total Quantity')
+    plt.ylabel('Total Value')
+    plt.grid(True)
+    st.pyplot(plt)
+
+# 12. Transaction Value by Payment Terms
+elif analysis_type == "Transaction Value by Payment Terms":
+    st.subheader("Transaction Value Distribution by Payment Terms")
+    payment_terms_value = dtsample.groupby('Payment_Terms')['Value'].sum()
+
+    plt.figure(figsize=(8, 8))
+    plt.pie(payment_terms_value, labels=payment_terms_value.index, autopct='%1.1f%%', startangle=140, colors=sns.color_palette("pastel"))
+    plt.title('Transaction Value Distribution by Payment Terms')
+    plt.axis('equal')  # Equal aspect ratio ensures that pie chart is circular.
+    st.pyplot(plt)
+
+# 13. Seasonal Trends by Category
+elif analysis_type == "Seasonal Trends by Category":
+    st.subheader("Seasonal Trends in Transactions by Category")
+    dtsample['Month'] = dtsample['Date'].dt.month
+    seasonal_trends = dtsample.groupby(['Month', 'Category'])['Value'].sum().reset_index()
+    seasonal_trends_pivot = seasonal_trends.pivot(index='Month', columns='Category', values='Value')
+
+    plt.figure(figsize=(12, 6))
+    for category in seasonal_trends_pivot.columns:
+        plt.plot(seasonal_trends_pivot.index, seasonal_trends_pivot[category], marker='o', label=category)
+
+    plt.title('Seasonal Trends in Transaction Value by Category')
+    plt.xlabel('Month')
+    plt.ylabel('Total Transaction Value')
+    plt.xticks(seasonal_trends_pivot.index, rotation=0)
+    plt.legend(title='Category')
+    plt.grid(True)
+    st.pyplot(plt)
+
+# 14. Quantity vs Value by Supplier
+elif analysis_type == "Quantity vs Value by Supplier":
+    st.subheader("Quantity vs Value by Supplier")
+    supplier_quantity_value = dtsample.groupby('Supplier')[['Quantity', 'Value']].sum().reset_index()
+
+    plt.figure(figsize=(10, 6))
+    plt.scatter(supplier_quantity_value['Quantity'], supplier_quantity_value['Value'], color='brown', alpha=0.6)
+    for i, txt in enumerate(supplier_quantity_value['Supplier']):
+        plt.annotate(txt, (supplier_quantity_value['Quantity'][i], supplier_quantity_value['Value'][i]), fontsize=8)
+
+    plt.title('Quantity vs. Value by Supplier')
+    plt.xlabel('Total Quantity')
+    plt.ylabel('Total Value')
+    plt.grid(True)
+    st.pyplot(plt)
