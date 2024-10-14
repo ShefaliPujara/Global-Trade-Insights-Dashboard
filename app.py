@@ -41,10 +41,10 @@ analysis_type = st.sidebar.selectbox("Choose an analysis to display:",
      "Transaction Value by Payment Terms", 
      "Seasonal Trends by Category", 
      "Quantity vs Value by Supplier", 
-     "Scatter Plot of Quantity vs Value with Shipping Cost", 
-     "Shipping Cost by Category and Payment Terms", 
+      
+      
      "Product Performance Radar Chart", 
-     "Correlation Matrix", 
+     
      "Waterfall Chart of Cumulative Category Value"]
 )
 
