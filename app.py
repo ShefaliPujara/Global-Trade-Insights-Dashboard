@@ -235,33 +235,7 @@ elif analysis_type == "Quantity vs Value by Supplier":
     plt.grid(True)
     st.pyplot(plt)
 
-# 13. Scatter Plot of Quantity vs Value with Shipping Cost
-elif analysis_type == "Scatter Plot of Quantity vs Value with Shipping Cost":
-    st.subheader("Scatter Plot of Quantity vs Value with Shipping Cost")
-    
-    plt.figure(figsize=(10, 6))
-    plt.scatter(dtsample['Quantity'], dtsample['Value'], c=dtsample[' Shipping_Cost'], cmap='viridis', alpha=0.5)
-    plt.colorbar(label=' Shipping Cost')
-    plt.title('Quantity vs. Value with Shipping Cost as Color')
-    plt.xlabel('Total Quantity')
-    plt.ylabel('Total Value')
-    plt.grid(True)
-    st.pyplot(plt)
 
-# 14. Shipping Cost by Category and Payment Terms
-elif analysis_type == "Shipping Cost by Category and Payment Terms":
-    st.subheader("Shipping Cost by Category and Payment Terms")
-    category_payment_cost = dtsample.groupby(['Category', 'Payment_Terms'])[' Shipping_Cost'].sum().unstack()
-
-    plt.figure(figsize=(12, 6))
-    category_payment_cost.plot(kind='bar', stacked=True)
-    plt.title('Shipping Cost by Category and Payment Terms')
-    plt.xlabel('Category')
-    plt.ylabel('Total Shipping Cost')
-    plt.xticks(rotation=45)
-    plt.legend(title='Payment Terms')
-    plt.grid(True)
-    st.pyplot(plt)
 
 # 15. Product Performance Radar Chart
 elif analysis_type == "Product Performance Radar Chart":
@@ -285,16 +259,6 @@ elif analysis_type == "Product Performance Radar Chart":
     plt.title(f'Performance of Product: {product_performance.loc[0, "Product"]}')
     st.pyplot(plt)
 
-# 16. Correlation Matrix
-elif analysis_type == "Correlation Matrix":
-    st.subheader("Correlation Matrix")
-    correlation_data = dtsample[['Value', 'Quantity', 'Weight', ' Shipping_Cost']]
-    corr = correlation_data.corr()
-
-    plt.figure(figsize=(8, 6))
-    sns.heatmap(corr, annot=True, fmt=".2f", cmap='coolwarm', square=True)
-    plt.title('Correlation Matrix')
-    st.pyplot(plt)
 
 # 17. Waterfall Chart of Cumulative Category Value
 elif analysis_type == "Waterfall Chart of Cumulative Category Value":
